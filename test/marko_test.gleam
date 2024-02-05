@@ -190,6 +190,7 @@ pub fn table_with_values_test() {
 
   let table_lines = marko.create_markdown_table(headers, rows)
 
+  // Can formatting be skipped here?
   let expected_output = [
     "| Name   | Profession |", "| ------ | ---------- |",
     "| Joseph | Developer  |", "| Sam    | Carpenter  |",
