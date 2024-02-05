@@ -37,7 +37,7 @@ pub fn main() {
     dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
   ]
 
-  let lines = create_markdown_table(["Name", "Profession"], rows)
+  let lines = create_markdown_table(rows)
   use lines <- result.try(lines)
 
   lines
@@ -52,9 +52,9 @@ pub fn bold(text: String) -> String {
   "**" <> text <> "**"
 }
 
-// Bullet and list are inconsistent - both make a list
-// Should be one function with a bool?
-// should it take in a list or be called multiple times?
+// TODO: bullet() and list() are inconsistent in how they work - both make a list
+// TODO: Should be one function with a bool?
+// TODO: should it take in a list or be called multiple times?
 pub fn bullet(text: String) -> String {
   "- " <> text
 }
@@ -63,7 +63,7 @@ pub fn code_inline(text: String) -> String {
   "`" <> text <> "`"
 }
 
-// Should we return string or list of strings?
+// TODO: Should we return string or list of strings?
 pub fn code_block(text, language: option.Option(String)) -> String {
   let language =
     language
@@ -82,7 +82,7 @@ pub fn header(text: String, level: Int) -> String {
   prefix <> " " <> text
 }
 
-// TODO - is string the right thing for a path in Gleam?
+// TODO: is string the right thing for a path in Gleam?
 pub fn image(text: String, path: String) -> String {
   "![" <> text <> "](" <> path <> ")"
 }
@@ -101,12 +101,12 @@ pub fn italic(text: String) -> String {
   "*" <> text <> "*"
 }
 
-// TODO - is string the right thing for a link in Gleam?
+// TODO: is string the right thing for a link in Gleam?
 pub fn link(text: String, link: String) -> String {
   "[" <> text <> "]" <> "(" <> link <> ")"
 }
 
-// Should we return string or list of strings?
+// TODO: Should we return string or list of strings?
 pub fn list(items: List(String)) -> String {
   let leave = list.is_empty(items)
   use <- bool.guard(leave, "")
@@ -145,22 +145,22 @@ pub fn task(text: String, is_complete: Bool) -> String {
   "- [" <> is_complete_symbol <> "] " <> text
 }
 
-// Should we return string or list of strings?
-// Ewww
+// TODO: Should we return string or list of strings?
+// TODO: Ewww
 pub fn create_markdown_table(
-  headers: List(String),
   rows: List(dict.Dict(String, String)),
 ) -> Result(List(String), Nil) {
-  let leave = list.is_empty(headers) || list.is_empty(rows)
+  let leave = list.is_empty(rows)
   use <- bool.guard(leave, Error(Nil))
 
-  let t = table.Table(headers, rows)
+  use t <- result.try(table.build_table(rows))
 
   let value_pad_dict =
     t
     |> table.get_column_widths()
 
   use value_pad_dict <- result.try(value_pad_dict)
+  use headers <- result.try(table.get_headers(t))
 
   let padded_headers =
     headers
@@ -187,16 +187,18 @@ pub fn create_markdown_table(
 
   let markdown_table = [row_string(padded_headers), row_string(separators)]
 
-  // Ewwww
+  // TODO: Ewwww
   let padded_rows =
     rows
     |> list.map(fn(row) {
       row
       |> dict.to_list()
+      // TODO: Is there a way to destructure a tuple as it is passed into a function?
       |> list.map(fn(item) {
         let pad =
           value_pad_dict
           |> dict.get(item.0)
+          // TODO: This must be dealt with
           |> result.unwrap(0)
 
         item.1

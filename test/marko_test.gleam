@@ -1,4 +1,3 @@
-import gleam/list
 import gleam/dict
 import gleam/option.{None, Some}
 import gleeunit
@@ -11,6 +10,7 @@ pub fn main() {
 }
 
 // TODO pull "Dog" into const?
+// TODO return actual errors instead of Nil?
 
 pub fn divider_test() {
   marko.divider
@@ -112,15 +112,7 @@ pub fn column_width_test() {
     dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
   ]
 
-  let assert Ok(row) =
-    rows
-    |> list.first
-
-  let headers =
-    row
-    |> dict.keys()
-
-  let t = table.Table(headers, rows)
+  let assert Ok(t) = table.build_table(rows)
   t
   |> table.get_column_width("Name")
   |> should.equal(Ok(6))
@@ -136,15 +128,7 @@ pub fn column_widths_test() {
     dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
   ]
 
-  let assert Ok(row) =
-    rows
-    |> list.first
-
-  let headers =
-    row
-    |> dict.keys()
-
-  let t = table.Table(headers, rows)
+  let assert Ok(t) = table.build_table(rows)
   let column_widths =
     t
     |> table.get_column_widths()
@@ -160,22 +144,20 @@ pub fn column_widths_test() {
   |> should.equal(Ok(10))
 }
 
-pub fn table_empty_headers_test() {
-  let rows = [
-    dict.from_list([#("Name", "Joseph"), #("Profession", "Developer")]),
-    dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
-  ]
-  let headers = []
-  let table_lines = marko.create_markdown_table(headers, rows)
+pub fn table_empty_row_test() {
+  let rows = []
+  let table_lines = marko.create_markdown_table(rows)
 
   table_lines
   |> should.equal(Error(Nil))
 }
 
-pub fn table_empty_row_test() {
-  let rows = []
-  let headers = ["Name", "Profession"]
-  let table_lines = marko.create_markdown_table(headers, rows)
+pub fn different_headers_test() {
+  let rows = [
+    dict.from_list([#("Names", "Joseph"), #("Profession", "Developer")]),
+    dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
+  ]
+  let table_lines = marko.create_markdown_table(rows)
 
   table_lines
   |> should.equal(Error(Nil))
@@ -186,11 +168,9 @@ pub fn table_with_values_test() {
     dict.from_list([#("Name", "Joseph"), #("Profession", "Developer")]),
     dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
   ]
-  let headers = ["Name", "Profession"]
+  let table_lines = marko.create_markdown_table(rows)
 
-  let table_lines = marko.create_markdown_table(headers, rows)
-
-  // Can formatting be skipped here?
+  // TODO: Can formatting be skipped here?
   let expected_output = [
     "| Name   | Profession |", "| ------ | ---------- |",
     "| Joseph | Developer  |", "| Sam    | Carpenter  |",
