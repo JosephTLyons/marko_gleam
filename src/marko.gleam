@@ -150,17 +150,13 @@ pub fn task(text: String, is_complete: Bool) -> String {
 pub fn create_markdown_table(
   rows: List(dict.Dict(String, String)),
 ) -> Result(List(String), Nil) {
-  let leave = list.is_empty(rows)
-  use <- bool.guard(leave, Error(Nil))
-
   use t <- result.try(table.build_table(rows))
 
   let value_pad_dict =
     t
     |> table.get_column_widths()
 
-  use value_pad_dict <- result.try(value_pad_dict)
-  use headers <- result.try(table.get_headers(t))
+  let headers = table.get_headers(t)
 
   let padded_headers =
     headers

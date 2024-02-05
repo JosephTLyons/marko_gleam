@@ -106,6 +106,39 @@ pub fn task_test() {
   |> should.equal("- [ ] Dog")
 }
 
+// Test table
+
+pub fn no_rows_test() {
+  let rows = []
+  rows
+  |> table.build_table()
+  |> should.equal(Error(Nil))
+}
+
+pub fn get_headers_test() {
+  let rows = [
+    dict.from_list([#("Name", "Joseph"), #("Profession", "Developer")]),
+    dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
+  ]
+
+  let assert Ok(t) = table.build_table(rows)
+  let headers = table.get_headers(t)
+
+  headers
+  |> should.equal(["Name", "Profession"])
+}
+
+pub fn different_headers_test() {
+  let rows = [
+    dict.from_list([#("Names", "Joseph"), #("Profession", "Developer")]),
+    dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
+  ]
+  let table_lines = table.build_table(rows)
+
+  table_lines
+  |> should.equal(Error(Nil))
+}
+
 pub fn column_width_test() {
   let rows = [
     dict.from_list([#("Name", "Joseph"), #("Profession", "Developer")]),
@@ -133,8 +166,6 @@ pub fn column_widths_test() {
     t
     |> table.get_column_widths()
 
-  let assert Ok(column_widths) = column_widths
-
   column_widths
   |> dict.get("Name")
   |> should.equal(Ok(6))
@@ -144,26 +175,9 @@ pub fn column_widths_test() {
   |> should.equal(Ok(10))
 }
 
-pub fn table_empty_row_test() {
-  let rows = []
-  let table_lines = marko.create_markdown_table(rows)
+// Test markdown table
 
-  table_lines
-  |> should.equal(Error(Nil))
-}
-
-pub fn different_headers_test() {
-  let rows = [
-    dict.from_list([#("Names", "Joseph"), #("Profession", "Developer")]),
-    dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),
-  ]
-  let table_lines = marko.create_markdown_table(rows)
-
-  table_lines
-  |> should.equal(Error(Nil))
-}
-
-pub fn table_with_values_test() {
+pub fn markdown_table_test() {
   let rows = [
     dict.from_list([#("Name", "Joseph"), #("Profession", "Developer")]),
     dict.from_list([#("Name", "Sam"), #("Profession", "Carpenter")]),

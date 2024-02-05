@@ -10,6 +10,8 @@ pub opaque type Table {
 }
 
 pub fn build_table(rows: List(Dict(String, String))) -> Result(Table, Nil) {
+  use <- bool.guard(list.is_empty(rows), Error(Nil))
+
   let rows_have_same_headers =
     rows
     |> list.window_by_2()
@@ -20,15 +22,13 @@ pub fn build_table(rows: List(Dict(String, String))) -> Result(Table, Nil) {
   Ok(Table(rows))
 }
 
-pub fn get_headers(table: Table) -> Result(List(String), Nil) {
-  use first_row <- result.try(list.first(table.rows))
-  Ok(
-    first_row
-    |> dict.keys(),
-  )
+pub fn get_headers(table: Table) -> List(String) {
+  // We know the table is in a valid state (non-empty): see build_table()
+  let assert Ok(first_row) = list.first(table.rows)
+  first_row
+  |> dict.keys()
 }
 
-// TODO: Make this better later - should it just return an Int?
 pub fn get_column_width(table: Table, header: String) -> Result(Int, Nil) {
   let header_length =
     header
@@ -47,16 +47,15 @@ pub fn get_column_width(table: Table, header: String) -> Result(Int, Nil) {
   Ok(int.max(header_length, values_max_length))
 }
 
-pub fn get_column_widths(table: Table) -> Result(Dict(String, Int), Nil) {
-  use headers <- result.try(get_headers(table))
+pub fn get_column_widths(table: Table) -> Dict(String, Int) {
+  let headers = get_headers(table)
 
-  let column_widths =
+  // Headers are derived from the table, whose state has been validated by now: see build_table()
+  let assert Ok(column_widths) =
     headers
     |> list.try_map(fn(header) { get_column_width(table, header) })
-  use column_widths <- result.try(column_widths)
 
   headers
   |> list.zip(column_widths)
   |> dict.from_list()
-  |> Ok()
 }
