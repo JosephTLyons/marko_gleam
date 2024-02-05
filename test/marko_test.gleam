@@ -12,8 +12,8 @@ pub fn main() {
 // TODO pull "Dog" into const?
 // TODO return actual errors instead of Nil?
 
-pub fn divider_test() {
-  marko.divider
+pub fn horizontal_rule_test() {
+  marko.horizontal_rule
   |> should.equal("---")
 }
 

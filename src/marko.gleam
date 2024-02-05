@@ -26,7 +26,7 @@ pub fn main() {
   io.println(text)
 
   let text =
-    ["hey", "there", "bud"]
+    ["pet", "a", "dog"]
     |> list.map(fn(item) {
       item
       |> unordered_list_item()
@@ -49,7 +49,7 @@ pub fn main() {
   Ok(Nil)
 }
 
-pub const divider = "---"
+pub const horizontal_rule = "---"
 
 pub fn bold(text: String) -> String {
   "**" <> text <> "**"
