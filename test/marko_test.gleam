@@ -22,11 +22,6 @@ pub fn bold_test() {
   |> should.equal("**Dog**")
 }
 
-pub fn bullet_test() {
-  marko.bullet("Dog")
-  |> should.equal("- Dog")
-}
-
 pub fn code_inline_test() {
   marko.code_inline("Dog")
   |> should.equal("`Dog`")
@@ -83,8 +78,13 @@ pub fn link_test() {
   |> should.equal("[Dog](www.dogs.com)")
 }
 
-pub fn list_test() {
-  marko.list(["Dog", "Doggy", "Doggo"])
+pub fn unordered_list_test() {
+  marko.unordered_list(["Dog", "Doggy", "Doggo"])
+  |> should.equal("- Dog\n- Doggy\n- Doggo")
+}
+
+pub fn ordered_list_test() {
+  marko.ordered_list(["Dog", "Doggy", "Doggo"])
   |> should.equal("1. Dog\n2. Doggy\n3. Doggo")
 }
 

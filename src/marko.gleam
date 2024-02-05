@@ -28,7 +28,7 @@ pub fn main() {
 
   let text =
     ["hey", "there", "bud"]
-    |> list()
+    |> unordered_list()
 
   io.println(text)
 
@@ -50,13 +50,6 @@ pub const divider = "---"
 
 pub fn bold(text: String) -> String {
   "**" <> text <> "**"
-}
-
-// TODO: bullet() and list() are inconsistent in how they work - both make a list
-// TODO: Should be one function with a bool?
-// TODO: should it take in a list or be called multiple times?
-pub fn bullet(text: String) -> String {
-  "- " <> text
 }
 
 pub fn code_inline(text: String) -> String {
@@ -106,21 +99,20 @@ pub fn link(text: String, link: String) -> String {
   "[" <> text <> "]" <> "(" <> link <> ")"
 }
 
-// TODO: Should we return string or list of strings?
-pub fn list(items: List(String)) -> String {
-  let leave = list.is_empty(items)
-  use <- bool.guard(leave, "")
+pub fn unordered_list(items: List(String)) -> String {
+  items
+  |> list.map(fn(item) { "- " <> item })
+  |> string.join("\n")
+}
 
-  let formatted_items =
-    items
-    |> enumerate()
-    |> list.map(fn(a) {
-      let bullet = int.to_string(a.0) <> "."
-      bullet <> " " <> a.1
-    })
-    |> string.join("\n")
-
-  formatted_items
+pub fn ordered_list(items: List(String)) -> String {
+  items
+  |> enumerate()
+  |> list.map(fn(a) {
+    let bullet = int.to_string(a.0) <> "."
+    bullet <> " " <> a.1
+  })
+  |> string.join("\n")
 }
 
 fn enumerate(items: List(a)) -> List(#(Int, a)) {
