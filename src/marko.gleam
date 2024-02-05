@@ -1,6 +1,5 @@
 import gleam/bool
 import gleam/dict
-import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
@@ -28,7 +27,12 @@ pub fn main() {
 
   let text =
     ["hey", "there", "bud"]
-    |> unordered_list()
+    |> list.map(fn(item) {
+      item
+      |> unordered_list_item()
+      |> indent(4)
+    })
+    |> string.join("\n")
 
   io.println(text)
 
@@ -40,8 +44,7 @@ pub fn main() {
   let lines = create_markdown_table(rows)
   use lines <- result.try(lines)
 
-  lines
-  |> list.each(fn(line) { io.debug(line) })
+  io.println(lines)
 
   Ok(Nil)
 }
@@ -56,7 +59,6 @@ pub fn code_inline(text: String) -> String {
   "`" <> text <> "`"
 }
 
-// TODO: Should we return string or list of strings?
 pub fn code_block(text, language: option.Option(String)) -> String {
   let language =
     language
@@ -99,25 +101,12 @@ pub fn link(text: String, link: String) -> String {
   "[" <> text <> "]" <> "(" <> link <> ")"
 }
 
-pub fn unordered_list(items: List(String)) -> String {
-  items
-  |> list.map(fn(item) { "- " <> item })
-  |> string.join("\n")
+pub fn unordered_list_item(text: String) -> String {
+  "- " <> text
 }
 
-pub fn ordered_list(items: List(String)) -> String {
-  items
-  |> enumerate()
-  |> list.map(fn(a) {
-    let bullet = int.to_string(a.0) <> "."
-    bullet <> " " <> a.1
-  })
-  |> string.join("\n")
-}
-
-fn enumerate(items: List(a)) -> List(#(Int, a)) {
-  list.range(1, list.length(items) + 1)
-  |> list.zip(items)
+pub fn ordered_list_item(text: String) -> String {
+  "1. " <> text
 }
 
 pub fn quote(text: String) -> String {
@@ -137,11 +126,10 @@ pub fn task(text: String, is_complete: Bool) -> String {
   "- [" <> is_complete_symbol <> "] " <> text
 }
 
-// TODO: Should we return string or list of strings?
 // TODO: Ewww
 pub fn create_markdown_table(
   rows: List(dict.Dict(String, String)),
-) -> Result(List(String), Nil) {
+) -> Result(String, Nil) {
   use t <- result.try(table.build_table(rows))
 
   let value_pad_dict = table.get_column_widths(t)
@@ -193,6 +181,7 @@ pub fn create_markdown_table(
   let markdown_table =
     markdown_table
     |> list.append(row_strings)
+    |> string.join("\n")
 
   Ok(markdown_table)
 }

@@ -78,14 +78,14 @@ pub fn link_test() {
   |> should.equal("[Dog](www.dogs.com)")
 }
 
-pub fn unordered_list_test() {
-  marko.unordered_list(["Dog", "Doggy", "Doggo"])
-  |> should.equal("- Dog\n- Doggy\n- Doggo")
+pub fn unordered_list_item_test() {
+  marko.unordered_list_item("Dog")
+  |> should.equal("- Dog")
 }
 
-pub fn ordered_list_test() {
-  marko.ordered_list(["Dog", "Doggy", "Doggo"])
-  |> should.equal("1. Dog\n2. Doggy\n3. Doggo")
+pub fn ordered_list_item_test() {
+  marko.ordered_list_item("Dog")
+  |> should.equal("1. Dog")
 }
 
 pub fn quote_test() {
@@ -185,10 +185,8 @@ pub fn markdown_table_test() {
   let table_lines = marko.create_markdown_table(rows)
 
   // TODO: Can formatting be skipped here?
-  let expected_output = [
-    "| Name   | Profession |", "| ------ | ---------- |",
-    "| Joseph | Developer  |", "| Sam    | Carpenter  |",
-  ]
+  let expected_output =
+    "| Name   | Profession |\n| ------ | ---------- |\n| Joseph | Developer  |\n| Sam    | Carpenter  |"
 
   table_lines
   |> should.equal(Ok(expected_output))
