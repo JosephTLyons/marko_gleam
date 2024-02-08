@@ -105,6 +105,10 @@ pub fn unordered_list_item(text: String) -> String {
   "- " <> text
 }
 
+// I'm not quite sure about this...
+// This function used to take in a list of items and return a multi-line string
+// But it didn't allow for nested items via identation
+// This seems really simple, like it isn't doing enough lifting for the user
 pub fn ordered_list_item(text: String) -> String {
   "1. " <> text
 }
