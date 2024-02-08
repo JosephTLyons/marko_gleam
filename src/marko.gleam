@@ -7,7 +7,7 @@ import gleam/result
 import gleam/string
 import internal/table
 
-// TODO - return actual errors instead of Nil
+// TODO - return actual errors instead of Nil?
 
 // TODO Delete
 pub fn main() {
