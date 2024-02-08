@@ -132,14 +132,14 @@ pub fn create_markdown_table(
 ) -> Result(String, Nil) {
   use t <- result.try(table.build_table(rows))
 
-  let value_pad_dict = table.get_column_widths(t)
+  let column_widths = table.get_column_widths(t)
   let headers = table.get_headers(t)
 
   let padded_headers =
     headers
     |> list.map(fn(header) {
       let assert Ok(pad) =
-        value_pad_dict
+        column_widths
         |> dict.get(header)
 
       header
@@ -150,7 +150,7 @@ pub fn create_markdown_table(
     headers
     |> list.map(fn(header) {
       let assert Ok(pad) =
-        value_pad_dict
+        column_widths
         |> dict.get(header)
       string.repeat("-", pad)
     })
@@ -166,7 +166,7 @@ pub fn create_markdown_table(
       // TODO: Is there a way to destructure a tuple as it is passed into a function?
       |> list.map(fn(item) {
         let assert Ok(pad) =
-          value_pad_dict
+          column_widths
           |> dict.get(item.0)
 
         item.1
