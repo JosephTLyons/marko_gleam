@@ -117,7 +117,7 @@ pub fn quote(text: String) -> String {
   "> " <> text
 }
 
-pub fn strike(text: String) -> String {
+pub fn strikethrough(text: String) -> String {
   "~~" <> text <> "~~"
 }
 

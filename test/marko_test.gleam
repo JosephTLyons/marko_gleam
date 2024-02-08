@@ -93,8 +93,8 @@ pub fn quote_test() {
   |> should.equal("> Dog")
 }
 
-pub fn strike_test() {
-  marko.strike("Dog")
+pub fn strikethrough_test() {
+  marko.strikethrough("Dog")
   |> should.equal("~~Dog~~")
 }
 
